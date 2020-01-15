@@ -1,10 +1,22 @@
 import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+
 
 const app = express();
+app.use(cors());
+app.use(bodyParser.json())
+
+
+
 const port = 3000;
-app.get('/', (req, res) => {
-  res.send('The sedulous hyena ate the antelope!');
+
+
+app.get('/', async (req, res) => {
+
 });
+
+
 app.listen(port, err => {
   if (err) {
     return console.error(err);
