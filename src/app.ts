@@ -31,10 +31,10 @@ mongoose.connection.on("error", () => {
   console.log(`Database error '  ${database}`);
 });
 
-app.get('/todolist', async (req, res) => {
+app.get('/', async (req, res) => {
     try {
         const todolists = await todolistmodel.find().exec();
-        return res.status(200).send(todolists);
+        return res.render('index', { data: JSON.stringify(todolists)});
     } catch(e) {
         console.log(e);  
         return res.status(422).send(e);
