@@ -8,7 +8,7 @@ import path from 'path';
 const app = express();
 app.use(cors());
 app.use(bodyParser.json())
-app.set("views", path.join(__dirname, "views"));
+app.set("views", path.join(__dirname, "/../src/views"));
 app.set("view engine", "ejs");
 
 

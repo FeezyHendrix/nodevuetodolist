@@ -8,8 +8,14 @@ const todolistSchema = new Schema({
         default: false
     },
     finished_at: String,
-    createdAt: Date,
-    updatedAt: Date
+    createdAt: {
+        type: Date,
+        default: Date.now()
+    },
+    updatedAt: {
+        type: Date,
+        default: Date.now()
+    }
 });
 
 const todolistmodel: Model<any>  = model('Todos', todolistSchema);

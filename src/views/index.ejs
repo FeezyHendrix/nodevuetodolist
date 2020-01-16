@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Todolist</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+</head>
+<body>
+    <main id="app">
+        <template>
+        <h1>Todolists</h1>
+        <br>
+        <div v-for="list in todolists">
+            <p>{{list.description}}</p>
+            <input type="checkbox" v-model="list.is_finished">
+        </div>
+        <br>
+        <div class="d-flex">
+            <input type="text" v-model='todo' v-on:change="asignNewTodo($event)" placeholder="input a new task">
+            <button v-on:click="createTodo()">Create</button>
+        </div>
+    </template>
+    </main>
+</body>
+
+<script>
+    var app = new Vue({
+        el: '#app',
+        data() {
+            return {
+                todolists: JSON.parse('<%- data %>'),
+                todo: ''
+            }   
+        },
+        computed: {
+        },
+        methods: {
+            asignNewTodo: (event) => {
+                this.todo = event.target.value;
+                console.log(this.todo);
+            },
+            createTodo: async () => {
+                console.log(this.todo);
+                if(this.todo == undefined) return alert('Input cannot be empty');
+
+                try {
+                    const body = {
+                        description: this.todo
+                    }
+                    const res = await fetch('/todolist', { body: JSON.stringify(body), method: 'POST', headers: { 'accept': 'application/json' }});
+                    const data = await res.json();
+                    console.log(data);
+                } catch(e) {    
+                    console.log(e);
+                } 
+            }
+
+        }
+    })
+</script>
+</html>
