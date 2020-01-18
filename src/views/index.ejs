@@ -6,29 +6,40 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Todolist</title>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+
+    <style>
+        #app {
+            display: block;
+            width: 80%;
+            margin: 0 auto;
+        }
+    </style>
 </head>
 <body>
     <main id="app">
-        <template>
+        
         <h1>Todolists</h1>
-        <br>
-        <div v-for="list in todolists">
-            <p>{{list.description}}</p>
-            <input type="checkbox" v-model="list.is_finished">
-        </div>
         <br>
         <div class="d-flex">
             <input type="text" v-model='todo' v-on:change="asignNewTodo($event)" placeholder="input a new task">
             <button v-on:click="createTodo()">Create</button>
         </div>
-    </template>
+        <br>
+        <div v-for="list in todolists">
+            <p>{{list.description}}</p>
+            <input type="checkbox" v-on:change="markTodoHasFinished($event, list)" v-model="list.is_finished">
+        </div>
+        <br>
+        
     </main>
 </body>
 
 <script>
+    var self;
     var app = new Vue({
         el: '#app',
         data() {
+            self = this;
             return {
                 todolists: JSON.parse('<%- data %>'),
                 todo: ''
@@ -38,25 +49,41 @@
         },
         methods: {
             asignNewTodo: (event) => {
-                this.todo = event.target.value;
-                console.log(this.todo);
+                self.todo = event.target.value;
             },
             createTodo: async () => {
-                console.log(this.todo);
-                if(this.todo == undefined) return alert('Input cannot be empty');
+                if(self.todo == undefined) return alert('Input cannot be empty');
 
                 try {
                     const body = {
-                        description: this.todo
-                    }
-                    const res = await fetch('/todolist', { body: JSON.stringify(body), method: 'POST', headers: { 'accept': 'application/json' }});
+                        description: self.todo
+                    };
+
+                    const res = await fetch('/todolist', { body: JSON.stringify(body), method: 'POST', headers: {'content-type': 'application/json'}});
                     const data = await res.json();
-                    console.log(data);
+                    self.todolists.push(data);
                 } catch(e) {    
                     console.log(e);
                 } 
+            }, 
+            markTodoHasFinished: async(event,list) => {
+                if(event.target.checked) {
+                    try {
+                        list.is_finished = true;
+                        list.finished_at = new Date(Date.now())
+                        const res = await fetch(`/todolist/${list._id}`, { body: JSON.stringify(list), method: 'PATCH', headers: {'content-type': 'application/json'} });
+                        const data = await res.json(); 
+                        
+                        self.todolists.map((todo, index) => {
+                            if(todo._id == list._id ) {
+                                self.todolists.splice(index, 1);
+                            }
+                        })
+                    } catch(e) {
+                        console.log(e);
+                    }
+                }
             }
-
         }
     })
 </script>

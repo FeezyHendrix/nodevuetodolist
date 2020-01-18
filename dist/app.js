@@ -38,7 +38,7 @@ mongoose_1.default.connection.on("error", () => {
 });
 app.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const todolists = yield todos_1.default.find().exec();
+        const todolists = yield todos_1.default.find({ is_finished: false }).exec();
         return res.render('index', { data: JSON.stringify(todolists) });
     }
     catch (e) {
@@ -49,6 +49,7 @@ app.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 }));
 app.post('/todolist', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        console.log(req.body);
         const dataInstance = new todos_1.default(req.body);
         yield dataInstance.save();
         return res.status(200).send(dataInstance);

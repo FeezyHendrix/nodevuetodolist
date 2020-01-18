@@ -8,8 +8,14 @@ const todolistSchema = new mongoose_1.Schema({
         default: false
     },
     finished_at: String,
-    createdAt: Date,
-    updatedAt: Date
+    createdAt: {
+        type: Date,
+        default: Date.now()
+    },
+    updatedAt: {
+        type: Date,
+        default: Date.now()
+    }
 });
 const todolistmodel = mongoose_1.model('Todos', todolistSchema);
 exports.default = todolistmodel;

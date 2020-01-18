@@ -33,7 +33,7 @@ mongoose.connection.on("error", () => {
 
 app.get('/', async (req, res) => {
     try {
-        const todolists = await todolistmodel.find().exec();
+        const todolists = await todolistmodel.find({is_finished: false}).exec();
         return res.render('index', { data: JSON.stringify(todolists)});
     } catch(e) {
         console.log(e);  
@@ -44,6 +44,7 @@ app.get('/', async (req, res) => {
 
 app.post('/todolist', async (req, res) => {
     try {
+        console.log(req.body);
         const dataInstance = new todolistmodel(req.body);
         await dataInstance.save();
 
