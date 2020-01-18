@@ -5,14 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Todolist</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
 
     <style>
+        body, html {
+            font-family: 'Roboto', sans-serif;
+        }
+
         #app {
             display: block;
             width: 80%;
             margin: 0 auto;
         }
+
+        h1 {
+            text-align: center;
+        }
+
+        .input_task {
+            padding: 15px;
+            border: 1px solid;
+            margin: 0;
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+        }
+
+        .input_task::placeholder {
+            text-transform: capitalize;
+            color: black;
+        }
+
+        .card {
+            /* width: calc(100% / 4); */
+            padding: 20px;
+            background: white;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+        }
+
+        button {
+            padding: 15px;
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
+            background-color: tomato;
+            border: 0;
+            color: #fff;
+            margin: 0;
+            width: 100px;
+        }
+
+        .input-cover {
+            display: block;
+            margin: 0 auto;
+            width: 300px;
+        }
+        
+        .d-flex {
+            display: flex;
+            /* justify-content: center; */
+            align-items: center;
+        }
+
+        .check {
+            margin-right: 10px;
+            padding: 10px;
+        }
+        p {
+            font-size: 20px;
+            text-transform: capitalize;
+        }
+
     </style>
 </head>
 <body>
@@ -20,17 +82,21 @@
         
         <h1>Todolists</h1>
         <br>
-        <div class="d-flex">
-            <input type="text" v-model='todo' v-on:change="asignNewTodo($event)" placeholder="input a new task">
-            <button v-on:click="createTodo()">Create</button>
+
+        <div class="card">
+            <div class="input-cover" v-if="todolists">
+                <div class="d-flex">
+                    <input class="input_task" type="text" v-model='todo' v-on:change="asignNewTodo($event)" placeholder="input a new task">
+                    <button v-on:click="createTodo()">Create</button>
+                </div>
+            </div>
+            <br>
+            <div v-for="list in todolists" class="d-flex">
+                <input class="check" type="checkbox" v-on:change="markTodoHasFinished($event, list)" v-model="list.is_finished">
+
+                <p>{{list.description}}</p>
+            </div>
         </div>
-        <br>
-        <div v-for="list in todolists">
-            <p>{{list.description}}</p>
-            <input type="checkbox" v-on:change="markTodoHasFinished($event, list)" v-model="list.is_finished">
-        </div>
-        <br>
-        
     </main>
 </body>
 
@@ -61,6 +127,7 @@
 
                     const res = await fetch('/todolist', { body: JSON.stringify(body), method: 'POST', headers: {'content-type': 'application/json'}});
                     const data = await res.json();
+                    self.todo = '';
                     self.todolists.push(data);
                 } catch(e) {    
                     console.log(e);
